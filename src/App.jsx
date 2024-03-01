@@ -2,21 +2,46 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const [people, setPeople] = useState([]);
+  const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchInput = (event) => {
+    const inputValue = event.target.value;
+    setSearch(inputValue);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSearchQuery(search);
+  };
 
   useEffect(() => {
-    fetch("https://swapi.dev/api/people/")
+    if (!searchQuery) return;
+
+    fetch(`https://swapi.dev/api/${searchQuery}/`)
       .then((response) => response.json())
-      .then(setTodos);
-  }, []);
+      .then((item) => setPeople(item.results));
+  }, [searchQuery]);
 
   return (
     <div className="app">
-      <h1>Todos</h1>
-      {todos.length === 0 ? (
-        <p>No todos here...</p>
+      <h2>Search for &quot;people&quot; or &quot;starships&quot;</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="search">Search: </label>
+        <input
+          type="text"
+          id="search"
+          name="search"
+          onChange={handleSearchInput}
+          value={search}
+        />
+        <button type="submit">Search</button>
+      </form>
+      {searchQuery ? (
+        people.map((person, index) => <li key={index}>Name: {person.name}</li>)
       ) : (
-        todos.results.map((todo, index) => <li key={index}>{todo.name}</li>)
+        <p>No search made yet</p>
       )}
     </div>
   );
