@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
   const [todos, setTodos] = useState([]);
 
-  // Problem under is infinite fetches
-  fetch("http://jsonplaceholder.typicode.com/todos")
-    .then((response) => response.json())
-    .then(setTodos);
+  useEffect(() => {
+    fetch("https://swapi.dev/api/people/")
+      .then((response) => response.json())
+      .then(setTodos);
+  }, []);
 
   return (
     <div className="app">
@@ -15,7 +16,7 @@ function App() {
       {todos.length === 0 ? (
         <p>No todos here...</p>
       ) : (
-        todos.map((todo, index) => <li key={index}>{todo.title}</li>)
+        todos.results.map((todo, index) => <li key={index}>{todo.name}</li>)
       )}
     </div>
   );
